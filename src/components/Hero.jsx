@@ -101,7 +101,7 @@ const Hero = () => {
   return (
     <div className="relative">
       <section
-        className="relative bg-cover bg-center min-h-screen flex items-center pb-32"
+        className="relative bg-cover bg-center min-h-screen flex items-center pb-16"
         style={{ backgroundImage: "url('/img/image.jpeg')" }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#F96303] to-[#0bafe1] opacity-75"></div>
@@ -115,7 +115,7 @@ const Hero = () => {
             <div className="lg:w-1/2 text-white">
               <div className="flex flex-wrap gap-2 mb-4">
                 <Badge variant="secondary" className="text-lg">
-                  Podcast Educativo
+                  <Users className="w-5 h-5 mr-2" /> Podcast Educativo
                 </Badge>
                 <Badge variant="secondary" className="text-lg">
                   <Users className="w-5 h-5 mr-2" /> Para Padres y Educadores
@@ -160,7 +160,7 @@ const Hero = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="text-white border-white hover:bg-white hover:text-[#F96303]"
+                  className="bg-[#21B4E2] hover:bg-gray-300"
                   onClick={() => setIsModalOpen(true)}
                 >
                   <Play className="mr-2 h-4 w-4" /> EMPEZAR A ESCUCHAR
@@ -174,7 +174,7 @@ const Hero = () => {
               <img
                 src="https://placehold.co/600x400@3x.png"
                 alt="Cuentohasta3 Podcast"
-                className="w-full rounded-lg shadow-2xl"
+                className="w-full rounded-lg shadow-2xl object-contain"
               />
             </motion.div>
           </motion.div>

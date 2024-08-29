@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import { Play } from "lucide-react";
+import { Play, Mic, Heart, Users } from "lucide-react";
 import VideoModal from "./common/VideoModal";
 import { motion } from "framer-motion";
-
-const colors = {
-  primary: "#F96303",
-  secondary: "#0bafe1",
-  accent: "#FB640B",
-  lightGray: "#f4f4f4",
-  white: "#ffffff",
-};
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const AboutUs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,11 +28,17 @@ const AboutUs = () => {
     },
   };
 
+  const features = [
+    { icon: <Mic className="w-6 h-6" />, text: "Episodios Semanales" },
+    { icon: <Heart className="w-6 h-6" />, text: "Consejos Prácticos" },
+    { icon: <Users className="w-6 h-6" />, text: "Entrevistas con Expertos" },
+  ];
+
   return (
-    <section className="py-16 bg-[#f4f4f4]">
+    <section className="py-16 bg-gradient-to-br from-[#f4f4f4] to-white">
       <div className="container mx-auto px-4">
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -46,78 +47,86 @@ const AboutUs = () => {
             className="flex flex-col justify-center space-y-6"
             variants={itemVariants}
           >
-            <span
-              className="text-xl font-semibold"
-              style={{ color: colors.secondary }}
-            >
+            <Badge variant="secondary" className="w-fit text-lg mb-2">
               Sobre Nosotros
-            </span>
-            <h3 className="text-3xl font-bold leading-tight text-[#F96303]">
-              Proporcionamos los{" "}
-              <span style={{ color: colors.accent }}>Últimos</span> Podcasts
-              Para Ti
-            </h3>
-            <p className="text-gray-600">
-              En Cuentohasta3, nos apasiona explorar el fascinante mundo de los
-              números y las matemáticas para niños pequeños y sus padres.
-              Nuestro podcast ofrece contenido educativo y entretenido que
-              fomenta el amor por el aprendizaje desde una edad temprana.
-              <br />
-              <br />
-              Cada episodio está diseñado cuidadosamente para inspirar la
-              curiosidad y desarrollar habilidades de pensamiento crítico, todo
-              mientras nos divertimos contando hasta 3 y más allá.
+            </Badge>
+            <h2 className="text-4xl font-bold leading-tight text-[#F96303]">
+              Navegando la Vida,{" "}
+              <span className="text-[#FB640B]">Una Conversación</span> a la Vez
+            </h2>
+            <p className="text-gray-600 text-lg">
+              En Cuentohasta3, nos apasiona explorar las complejidades de la
+              vida moderna, las relaciones y el crecimiento personal. Nuestro
+              podcast ofrece un espacio acogedor para discutir temas que
+              realmente importan: desde cultivar amistades duraderas hasta
+              navegar los desafíos del trabajo y el amor.
             </p>
-            <h5 className="text-xl font-bold" style={{ color: colors.primary }}>
-              Escucha Nuestro Podcast En
-            </h5>
-            <motion.div className="flex space-x-4" variants={itemVariants}>
-              {["youtube", "spotify", "podcast"].map((platform, index) => (
-                <motion.img
-                  key={index}
-                  src={`/img/${platform}.png`}
-                  alt={platform}
-                  className="h-12"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                />
+            <p className="text-gray-600 text-lg">
+              Cada episodio está diseñado cuidadosamente para inspirar, informar
+              y acompañarte en tu viaje personal. Ya sea que estés buscando
+              mejorar tus relaciones, desarrollar tu carrera o simplemente
+              encontrar un equilibrio en la vida, Cuentohasta3 está aquí para
+              apoyarte en cada paso del camino.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              {features.map((feature, index) => (
+                <Card key={index} className="bg-[#f4f4f4]">
+                  <CardContent className="flex items-center p-4">
+                    <div className="mr-4 text-[#FB640B]">{feature.icon}</div>
+                    <p className="font-semibold">{feature.text}</p>
+                  </CardContent>
+                </Card>
               ))}
-            </motion.div>
+            </div>
+            <div>
+              <h5 className="text-xl font-bold text-[#F96303] mb-4">
+                Escucha Nuestro Podcast En
+              </h5>
+              <motion.div className="flex space-x-4" variants={itemVariants}>
+                {["youtube", "spotify", "podcast"].map((platform, index) => (
+                  <motion.img
+                    key={index}
+                    src={`/img/${platform}.png`}
+                    alt={platform}
+                    className="h-12"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  />
+                ))}
+              </motion.div>
+            </div>
           </motion.div>
           <motion.div className="relative" variants={itemVariants}>
+            <Card className="absolute top-0 right-0 bg-gradient-to-r from-[#F96303] to-[#FB640B] -mt-8 z-10">
+              <CardContent className="p-6">
+                <div className="text-center text-white">
+                  <h2 className="text-3xl font-bold m-0">
+                    5<sup>to</sup>
+                  </h2>
+                  <p className="text-lg m-0">Año</p>
+                </div>
+              </CardContent>
+            </Card>
             <motion.div
-              className="absolute top-0 right-0 bg-gradient-to-r from-[#F96303] to-[#FB640B] px-6 py-4 rounded-lg shadow-lg -mt-8 z-10"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="text-center text-white">
-                <h2 className="text-3xl font-bold m-0">
-                  1<sup>er</sup>
-                </h2>
-                <p className="text-lg m-0">Año</p>
-              </div>
-            </motion.div>
-            <motion.div
-              className="relative mr-8"
+              className="relative mr-8 rounded-lg overflow-hidden shadow-lg"
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0bafe1] opacity-70 rounded-lg"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0bafe1] opacity-70"></div>
               <motion.div
                 className="absolute inset-0 flex justify-center items-center z-10"
                 whileHover={{ scale: 1.1 }}
               >
-                <button
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="rounded-full w-16 h-16 p-0"
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-white text-[#F96303] rounded-full w-16 h-16 flex items-center justify-center hover:bg-[#FB640B] hover:text-white transition-colors"
                 >
-                  <Play size={32} />
-                </button>
+                  <Play className="w-8 h-8" />
+                </Button>
               </motion.div>
-              <img
-                src="/img/image.jpeg"
-                alt="About Us"
-                className="w-full rounded-lg shadow-lg"
-              />
+              <img src="/img/image.jpeg" alt="About Us" className="w-full" />
             </motion.div>
           </motion.div>
         </motion.div>

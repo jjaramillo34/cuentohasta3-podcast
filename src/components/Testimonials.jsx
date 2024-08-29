@@ -1,9 +1,9 @@
-import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { Star, QuoteIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 
 // Import Swiper styles
 import "swiper/css";
@@ -46,6 +46,14 @@ const TestimonialCard = ({ rating, content, image, name, role }) => (
     </div>
   </motion.div>
 );
+
+TestimonialCard.propTypes = {
+  rating: PropTypes.number.isRequired,
+  content: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  role: PropTypes.string.isRequired,
+};
 
 const TestimonialSection = () => {
   const testimonials = [
