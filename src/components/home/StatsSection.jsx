@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Users, Headphones, Heart } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
+import PropTypes from "prop-types";
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -27,6 +28,12 @@ const StatItem = ({ icon, number, text }) => {
       </p>
     </div>
   );
+};
+
+StatItem.propTypes = {
+  icon: PropTypes.node,
+  number: PropTypes.number,
+  text: PropTypes.string,
 };
 
 const StatsSection = () => {

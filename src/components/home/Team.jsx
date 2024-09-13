@@ -17,8 +17,9 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
+  Instagram,
+  Linkedin,
 } from "lucide-react";
-import { useInView } from "react-intersection-observer";
 import {
   Dialog,
   DialogContent,
@@ -41,24 +42,18 @@ const HostCard = ({
   qualities,
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
   const cardRef = useRef(null);
   const frontRef = useRef(null);
   const backRef = useRef(null);
 
   useEffect(() => {
-    if (inView) {
-      gsap.from(cardRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: "power3.out",
-      });
-    }
-  }, [inView]);
+    gsap.from(cardRef.current, {
+      opacity: 0,
+      y: 50,
+      duration: 0.5,
+      ease: "power3.out",
+    });
+  }, []);
 
   useEffect(() => {
     if (isFlipped) {
@@ -71,24 +66,25 @@ const HostCard = ({
   }, [isFlipped]);
 
   return (
-    <div ref={ref} className="h-[600px] perspective">
+    <div className="h-[600px] perspective">
       <div
         className="w-full h-full cursor-pointer relative [transform-style:preserve-3d]"
         ref={cardRef}
         onClick={() => setIsFlipped(!isFlipped)}
       >
         <Card
-          className="w-full h-full absolute [backface-visibility:hidden]"
+          className="w-full h-full absolute [backface-visibility:hidden] bg-white"
           ref={frontRef}
         >
-          <CardHeader className="flex-shrink-0">
+          <CardHeader className="flex-shrink-0 p-0">
             <div className="relative">
               <img
                 src={image}
                 alt={name}
-                className="w-full h-48 object-cover rounded-t-lg"
+                className="w-full h-64 object-cover rounded-t-lg"
               />
-              <Avatar className="absolute -bottom-6 left-4 w-20 h-20 border-4 border-white">
+              <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
+              <Avatar className="absolute -bottom-6 left-4 w-24 h-24 border-4 border-white">
                 <AvatarImage src={image} alt={name} />
                 <AvatarFallback className="bg-[#F96303] text-white text-4xl font-bold">
                   {name.charAt(0)}
@@ -96,7 +92,7 @@ const HostCard = ({
               </Avatar>
             </div>
           </CardHeader>
-          <CardContent className="flex-grow pt-8 pb-4 flex flex-col">
+          <CardContent className="flex-grow pt-10 pb-4 flex flex-col">
             <h3 className="text-2xl font-bold text-[#F96303] mb-1">{name}</h3>
             <Badge
               variant="secondary"
@@ -111,10 +107,10 @@ const HostCard = ({
               {skills.map((skill, index) => (
                 <div key={index} className="mb-2">
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm">{skill.name}</span>
-                    <span className="text-sm">{skill.level}%</span>
+                    <span className="text-sm font-medium">{skill.name}</span>
+                    <span className="text-sm font-medium">{skill.level}%</span>
                   </div>
-                  <Progress value={skill.level} className="w-full" />
+                  <Progress value={skill.level} className="w-full h-2" />
                 </div>
               ))}
             </div>
@@ -139,39 +135,43 @@ const HostCard = ({
             <Button
               variant="outline"
               size="sm"
-              className="text-[#F96303] border-[#F96303]"
+              className="text-[#F96303] border-[#F96303] hover:bg-[#F96303] hover:text-white transition-colors"
             >
-              Flip for More
+              Más Info
             </Button>
           </CardFooter>
         </Card>
         <Card
-          className="w-full h-full absolute [backface-visibility:hidden] [transform:rotateY(-180deg)] bg-[#F96303] text-white"
+          className="w-full h-full absolute [backface-visibility:hidden] [transform:rotateY(-180deg)] bg-gradient-to-br from-[#F96303] to-[#0bafe1] text-white"
           ref={backRef}
         >
           <CardContent className="flex flex-col justify-center h-full p-6">
             <h3 className="text-2xl font-bold mb-4">{name}</h3>
-            <p className="text-lg mb-4">{role}</p>
+            <p className="text-lg mb-4 font-semibold">{role}</p>
             <div className="mb-4 flex-grow overflow-auto">
-              <h4 className="font-semibold mb-2 text-[#0bafe1]">Cualidades:</h4>
-              {qualities.map((quality, index) => (
-                <div
-                  key={index}
-                  className="mb-2 backdrop-blur-sm bg-white/10 p-2 rounded"
-                >
-                  {quality}
-                </div>
-              ))}
+              <h4 className="font-semibold mb-2 text-white">Cualidades:</h4>
+              <div className="flex flex-wrap gap-2">
+                {qualities.map((quality, index) => (
+                  <Badge
+                    key={index}
+                    className="bg-white/20 text-white hover:bg-white/30"
+                  >
+                    {quality}
+                  </Badge>
+                ))}
+              </div>
             </div>
-            <p className="mb-4 italic text-sm">"{testimonial}"</p>
-            <p className="mb-4">{bio}</p>
+            <p className="mb-4 italic text-sm bg-white/10 p-3 rounded-lg">
+              "{testimonial}"
+            </p>
+            <p className="mb-4 text-sm">{bio}</p>
             <Button
               variant="secondary"
               size="sm"
-              className="bg-[#0bafe1] text-white hover:bg-[#0bafe1]/80"
+              className="bg-white text-[#F96303] hover:bg-white/90 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
-              Learn More
+              Conoce Más
             </Button>
           </CardContent>
         </Card>
@@ -182,32 +182,26 @@ const HostCard = ({
 
 const FeaturedHost = ({ host }) => {
   const featuredHostRef = useRef(null);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
 
   useEffect(() => {
-    if (inView) {
-      gsap.from(featuredHostRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: "power3.out",
-      });
-    }
-  }, [inView]);
+    gsap.from(featuredHostRef.current, {
+      opacity: 0,
+      y: 50,
+      duration: 0.5,
+      ease: "power3.out",
+    });
+  }, []);
 
   return (
-    <div ref={ref}>
+    <div>
       <Card
         ref={featuredHostRef}
-        className="overflow-hidden bg-black text-white"
+        className="overflow-hidden bg-gradient-to-r from-gray-900 to-black text-white shadow-xl"
       >
         <div className="md:flex">
           <div className="md:flex-shrink-0">
             <img
-              className="h-48 w-full object-cover md:w-48"
+              className="h-64 w-full object-cover md:w-64"
               src={host.image}
               alt={host.name}
             />
@@ -216,19 +210,19 @@ const FeaturedHost = ({ host }) => {
             <Badge variant="secondary" className="mb-2 bg-[#0bafe1] text-white">
               Host Destacado
             </Badge>
-            <h3 className="mt-1 text-2xl leading-tight font-bold text-[#F96303]">
+            <h3 className="mt-1 text-3xl leading-tight font-bold text-[#F96303]">
               {host.name}
             </h3>
-            <p className="mt-2 text-[#0bafe1]">{host.role}</p>
-            <p className="mt-4">{host.bio}</p>
-            <div className="mt-4">
+            <p className="mt-2 text-[#0bafe1] font-semibold">{host.role}</p>
+            <p className="mt-4 text-gray-300">{host.bio}</p>
+            <div className="mt-6">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="bg-[#F96303] text-white hover:bg-[#F96303]/80">
+                  <Button className="bg-[#F96303] text-white hover:bg-[#F96303]/80 transition-colors">
                     <Calendar className="mr-2 h-4 w-4" /> Reservar Sesión
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-black text-white">
+                <DialogContent className="bg-gray-900 text-white">
                   <DialogHeader>
                     <DialogTitle className="text-[#F96303]">
                       Reservar una Sesión con {host.name}
@@ -280,7 +274,10 @@ const TextReplacer = ({ words }) => {
 
   return (
     <div className="h-8">
-      <span ref={textRef} className="inline-block text-[#0bafe1]">
+      <span
+        ref={textRef}
+        className="inline-block text-[#0bafe1] font-bold text-2xl"
+      >
         {words[currentIndex]}
       </span>
     </div>
@@ -333,7 +330,8 @@ const ScrambleText = ({ text }) => {
 const LifeSkillsTeamSection = () => {
   const hosts = [
     {
-      image: "/placeholder.svg?height=400&width=400",
+      image:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       name: "Criss la Caramelito Leon",
       role: "Experta en Desarrollo Infantil",
       socials: [
@@ -343,7 +341,11 @@ const LifeSkillsTeamSection = () => {
           name: "Facebook",
         },
         { url: "https://www.twitter.com", icon: <Twitter />, name: "Twitter" },
-        { url: "https://www.youtube.com", icon: <Youtube />, name: "YouTube" },
+        {
+          url: "https://www.instagram.com",
+          icon: <Instagram />,
+          name: "Instagram",
+        },
       ],
       skills: [
         { name: "Desarrollo Infantil", level: 95 },
@@ -356,14 +358,15 @@ const LifeSkillsTeamSection = () => {
       qualities: ["Empatía", "Creatividad", "Paciencia", "Adaptabilidad"],
     },
     {
-      image: "/placeholder.svg?height=400&width=400",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       name: "Santy el Piojo Alarcón",
       role: "Consejero de Relaciones Familiares",
       socials: [
         {
-          url: "https://www.facebook.com",
-          icon: <Facebook />,
-          name: "Facebook",
+          url: "https://www.linkedin.com",
+          icon: <Linkedin />,
+          name: "LinkedIn",
         },
         { url: "https://www.twitter.com", icon: <Twitter />, name: "Twitter" },
         { url: "https://www.youtube.com", icon: <Youtube />, name: "YouTube" },
@@ -379,17 +382,22 @@ const LifeSkillsTeamSection = () => {
       qualities: ["Empatía", "Escucha Activa", "Imparcialidad", "Resiliencia"],
     },
     {
-      image: "/placeholder.svg?height=400&width=400",
+      image:
+        "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       name: "Eva Torres",
       role: "Especialista en Amistad y Socialización",
       socials: [
+        {
+          url: "https://www.instagram.com",
+          icon: <Instagram />,
+          name: "Instagram",
+        },
+        { url: "https://www.twitter.com", icon: <Twitter />, name: "Twitter" },
         {
           url: "https://www.facebook.com",
           icon: <Facebook />,
           name: "Facebook",
         },
-        { url: "https://www.twitter.com", icon: <Twitter />, name: "Twitter" },
-        { url: "https://www.youtube.com", icon: <Youtube />, name: "YouTube" },
       ],
       skills: [
         { name: "Habilidades Sociales", level: 96 },
@@ -437,18 +445,24 @@ const LifeSkillsTeamSection = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gray-700 text-white" ref={sectionRef}>
+    <section
+      className="py-20 bg-gradient-to-b from-gray-900 to-gray-800 text-white"
+      ref={sectionRef}
+    >
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <Badge
             variant="secondary"
-            className="text-lg mb-2 bg-[#0bafe1] text-white"
+            className="text-lg mb-4 bg-[#0bafe1] text-white px-4 py-1 rounded-full"
           >
             Nuestro Equipo de Vida
           </Badge>
-          <h2 className="text-4xl font-bold mt-2 text-[#F96303]" ref={titleRef}>
+          <h2
+            className="text-5xl font-bold mt-2 mb-4 text-white"
+            ref={titleRef}
+          >
             Conoce a Nuestros{" "}
-            <span className="text-[#0bafe1]">
+            <span className="text-[#F96303]">
               Expertos en Habilidades de Vida
             </span>
           </h2>
@@ -456,7 +470,7 @@ const LifeSkillsTeamSection = () => {
             words={["XOXO", "Amor", "Familia", "Amistad", "Crecimiento"]}
           />
           <div
-            className="mx-auto text-white max-w-3xl mt-4 text-lg"
+            className="mx-auto text-gray-300 max-w-3xl mt-6 text-lg leading-relaxed"
             ref={descriptionRef}
           >
             <ScrambleText text="Nuestros expertos combinan su pasión por el desarrollo personal con años de experiencia en relaciones, crianza y habilidades sociales. Juntos, crean contenido significativo que ayuda a niños y adultos a navegar los desafíos de la vida cotidiana y construir relaciones sólidas." />
@@ -465,7 +479,7 @@ const LifeSkillsTeamSection = () => {
 
         <FeaturedHost host={hosts[0]} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-20">
           {hosts.map((host, index) => (
             <div key={index} className="host-card">
               <HostCard {...host} />

@@ -4,29 +4,29 @@ import { useState, useEffect, useRef } from "react";
 import {
   Play,
   Mic,
-  Heart,
+  Headphones,
   Users,
-  ChevronLeft,
-  ChevronRight,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import VideoModal from "../common/VideoModal";
-import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { gsap } from "gsap";
-import { Flip } from "gsap/Flip";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
 
-gsap.registerPlugin(Flip, TextPlugin);
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 const features = [
-  { id: 1, icon: <Mic className="w-6 h-6" />, text: "Episodios Semanales" },
-  { id: 2, icon: <Heart className="w-6 h-6" />, text: "Consejos Prácticos" },
+  { id: 1, icon: <Mic className="w-8 h-8" />, text: "Episodios Semanales" },
   {
-    id: 3,
-    icon: <Users className="w-6 h-6" />,
-    text: "Entrevistas con Expertos",
+    id: 2,
+    icon: <Headphones className="w-8 h-8" />,
+    text: "Variedad de Temas",
   },
+  { id: 3, icon: <Users className="w-8 h-8" />, text: "Invitados Especiales" },
+  { id: 4, icon: <Sparkles className="w-8 h-8" />, text: "Contenido Original" },
 ];
 
 const timeline = [
@@ -37,71 +37,93 @@ const timeline = [
   { id: 5, year: 2023, event: "Celebramos nuestro episodio #200" },
 ];
 
-const testimonials = [
-  {
-    id: 1,
-    name: "María G.",
-    text: "Cuentohasta3 ha transformado mi perspectiva sobre las relaciones. ¡Imprescindible!",
-  },
-  {
-    id: 2,
-    name: "Carlos R.",
-    text: "Los consejos prácticos de este podcast me han ayudado enormemente en mi vida diaria.",
-  },
-  {
-    id: 3,
-    name: "Laura M.",
-    text: "Las entrevistas son fascinantes. Siempre aprendo algo nuevo en cada episodio.",
-  },
+const descriptions = [
+  "CuentaHasta3 es tu podcast semanal que explora una amplia gama de temas fascinantes.",
+  "Desde ciencia y tecnología hasta arte y cultura, nuestro objetivo es satisfacer tu curiosidad.",
+  "Expandimos tus horizontes con cada episodio, ofreciendo perspectivas únicas y entretenidas.",
+  "Únete a nosotros en un viaje de descubrimiento, risa y aprendizaje cada semana.",
 ];
 
 const AboutUs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
 
   const containerRef = useRef(null);
-  const timelineRef = useRef(null);
-  const testimonialRef = useRef(null);
+  const titleRef = useRef(null);
+  const descriptionRef = useRef(null);
   const featuresRef = useRef(null);
+  const timelineRef = useRef(null);
 
   useEffect(() => {
-    if (inView) {
-      animateElements();
-    }
-  }, [inView]);
+    const ctx = gsap.context(() => {
+      // Main content animation
+      gsap.from(containerRef.current, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+        },
+      });
 
-  const animateElements = () => {
-    gsap.from(containerRef.current, {
-      opacity: 0,
-      y: 50,
-      duration: 1,
-      ease: "power3.out",
+      // Title animation
+      gsap.from(titleRef.current, {
+        opacity: 0,
+        x: -50,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: "top 80%",
+        },
+      });
+
+      // Description text replacement animation
+      const textAnimation = gsap.to(descriptionRef.current, {
+        duration: 2,
+        text: {
+          value: descriptions[0],
+          delimiter: " ",
+        },
+        ease: "none",
+        repeat: -1,
+        repeatDelay: 3,
+        yoyo: true,
+      });
+
+      // Features animation
+      gsap.from(featuresRef.current.children, {
+        opacity: 0,
+        y: 30,
+        stagger: 0.2,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+        scrollTrigger: {
+          trigger: featuresRef.current,
+          start: "top 80%",
+        },
+      });
+
+      // Timeline animation
+      const timelineItems = timelineRef.current.children;
+      gsap.from(timelineItems, {
+        opacity: 0,
+        scale: 0.5,
+        y: 50,
+        stagger: 0.3,
+        duration: 1,
+        ease: "elastic.out(1, 0.5)",
+        scrollTrigger: {
+          trigger: timelineRef.current,
+          start: "top 80%",
+        },
+        onComplete: () => animateTimelineText(),
+      });
     });
 
-    gsap.from(featuresRef.current.children, {
-      opacity: 0,
-      y: 20,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: "back.out(1.7)",
-    });
-
-    // Enhanced animation for the timeline
-    gsap.from(timelineRef.current.children, {
-      opacity: 0,
-      scale: 0.5,
-      y: 50,
-      stagger: 0.3,
-      duration: 1,
-      ease: "elastic.out(1, 0.5)",
-      onComplete: () => animateTimelineText(),
-    });
-  };
+    return () => ctx.revert();
+  }, []);
 
   const animateTimelineText = () => {
     timeline.forEach((item, index) => {
@@ -125,49 +147,33 @@ const AboutUs = () => {
     });
   };
 
-  const flipTestimonial = (direction) => {
-    const state = Flip.getState(testimonialRef.current);
-
-    setCurrentTestimonial((prev) =>
-      direction === "next"
-        ? (prev + 1) % testimonials.length
-        : (prev - 1 + testimonials.length) % testimonials.length
-    );
-
-    Flip.from(state, {
-      duration: 0.6,
-      ease: "power1.inOut",
-      absolute: true,
-      spin: direction === "next" ? 1 : -1,
-    });
-  };
-
   return (
-    <section
-      className="py-16 bg-gradient-to-br from-gray-900 to-gray-800 text-white"
-      ref={ref}
-    >
+    <section className="py-20 bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 overflow-hidden">
       <div className="container mx-auto px-4" ref={containerRef}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <h2
+          ref={titleRef}
+          className="text-5xl font-bold text-[#F96303] mb-12 text-center"
+        >
+          Sobre CuentaHasta3
+        </h2>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
           <div>
-            <h2 className="text-4xl font-bold text-[#F96303] mb-6">
-              Sobre Cuentohasta3
-            </h2>
-            <p className="text-lg mb-6 text-gray-300">
-              Cuentohasta3 es tu podcast semanal sobre relaciones, crecimiento
-              personal y bienestar emocional. Nuestro objetivo es proporcionarte
-              herramientas prácticas y consejos útiles para mejorar tu vida
-              diaria.
-            </p>
-            <div
-              className="grid grid-cols-1 md:grid-cols-3 gap-4"
-              ref={featuresRef}
+            <p
+              ref={descriptionRef}
+              className="text-xl mb-8 text-gray-700 leading-relaxed h-24"
             >
+              {/* Text will be replaced by GSAP animation */}
+            </p>
+            <div className="grid grid-cols-2 gap-6" ref={featuresRef}>
               {features.map((feature) => (
-                <Card key={feature.id} className="bg-gray-800 border-gray-700">
-                  <CardContent className="flex flex-col items-center p-4">
-                    <div className="text-[#F96303]">{feature.icon}</div>
-                    <p className="mt-2 text-center text-gray-300">
+                <Card
+                  key={feature.id}
+                  className="bg-white border-gray-200 hover:bg-gray-50 transition-colors duration-300"
+                >
+                  <CardContent className="flex flex-col items-center p-6">
+                    <div className="text-[#F96303] mb-4">{feature.icon}</div>
+                    <p className="text-center text-gray-700 font-semibold">
                       {feature.text}
                     </p>
                   </CardContent>
@@ -175,75 +181,62 @@ const AboutUs = () => {
               ))}
             </div>
           </div>
-          <div className="relative">
+          <div className="relative group">
             <img
               src="https://placehold.co/600x400@3x.png"
-              alt="Cuentohasta3 Podcast"
-              className="rounded-lg shadow-lg"
+              alt="CuentaHasta3 Podcast"
+              className="rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105"
             />
-            <Button
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#F96303] hover:bg-[#FB640B]"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <Play className="mr-2 h-4 w-4" /> Ver Video
-            </Button>
+            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+              <Button
+                className="bg-[#F96303] hover:bg-[#FB640B] text-white"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Play className="mr-2 h-5 w-5" /> Ver Trailer
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="mt-16">
-          <h3 className="text-3xl font-bold text-center text-[#F96303] mb-8">
-            Nuestra Historia
+        <div className="mb-20">
+          <h3 className="text-4xl font-bold text-center text-[#F96303] mb-12">
+            Nuestra Trayectoria
           </h3>
           <div
-            className="flex flex-col md:flex-row justify-between items-start md:items-center"
+            className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-8 md:space-y-0"
             ref={timelineRef}
           >
-            {timeline.map((item) => (
+            {timeline.map((item, index) => (
               <div
                 key={item.id}
-                className="flex flex-col items-center text-center mb-4 md:mb-0"
+                className="flex flex-col items-center text-center relative"
               >
-                <div className="w-16 h-16 rounded-full bg-[#FB640B] flex items-center justify-center text-white font-bold mb-2">
-                  <span className="year"></span>
+                <div className="w-20 h-20 rounded-full bg-[#FB640B] flex items-center justify-center text-white font-bold mb-4 shadow-lg">
+                  <span className="year text-2xl"></span>
                 </div>
-                <p className="text-sm text-gray-300 event h-12"></p>
+                <p className="text-sm text-gray-600 event h-16 max-w-[150px]"></p>
+                {index < timeline.length - 1 && (
+                  <ArrowRight
+                    className="hidden md:block absolute top-8 -right-4 text-[#FB640B]"
+                    size={24}
+                  />
+                )}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-16">
-          <h3 className="text-3xl font-bold text-center text-[#F96303] mb-8">
-            Lo Que Dicen Nuestros Oyentes
+        <div className="text-center">
+          <h3 className="text-4xl font-bold text-[#F96303] mb-6">
+            Únete a Nuestra Comunidad
           </h3>
-          <div className="relative">
-            <div ref={testimonialRef}>
-              <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-                <p className="text-lg mb-4 text-gray-300">
-                  {testimonials[currentTestimonial].text}
-                </p>
-                <p className="font-bold text-[#F96303]">
-                  - {testimonials[currentTestimonial].name}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2 bg-gray-800 border-gray-700 text-[#F96303]"
-              onClick={() => flipTestimonial("prev")}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2 bg-gray-800 border-gray-700 text-[#F96303]"
-              onClick={() => flipTestimonial("next")}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <p className="text-xl text-gray-700 mb-8">
+            Descubre nuevas ideas, amplía tus conocimientos y forma parte de una
+            comunidad de mentes curiosas.
+          </p>
+          <Button className="bg-[#F96303] hover:bg-[#FB640B] text-white text-lg py-6 px-8">
+            Escucha Ahora
+          </Button>
         </div>
       </div>
       <VideoModal
