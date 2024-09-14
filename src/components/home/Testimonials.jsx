@@ -29,60 +29,90 @@ const colors = {
 const TestimonialCard = ({ rating, content, image, name, role, videoUrl }) => {
   const [showVideo, setShowVideo] = useState(false);
   const cardRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
+    gsap.set(cardRef.current, { transformStyle: "preserve-3d" });
+    gsap.set(contentRef.current, { backfaceVisibility: "hidden" });
+
     gsap.fromTo(
       cardRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.5, scrollTrigger: cardRef.current }
+      { opacity: 0, y: 20, rotationY: -180 },
+      {
+        opacity: 1,
+        y: 0,
+        rotationY: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: cardRef.current,
+      }
     );
   }, []);
+
+  const flipCard = () => {
+    gsap.to(cardRef.current, {
+      rotationY: showVideo ? 0 : 180,
+      duration: 0.6,
+      ease: "power1.inOut",
+      onComplete: () => setShowVideo(!showVideo),
+    });
+  };
 
   return (
     <div
       ref={cardRef}
-      className="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden"
+      className="bg-white p-8 rounded-xl shadow-lg relative overflow-hidden h-[400px]"
+      style={{ transformStyle: "preserve-3d" }}
     >
       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#F96303] to-[#0bafe1]"></div>
-      <QuoteIcon size={40} className="text-[#FB640B] mb-4" />
-      <p className="text-gray-700 text-lg mb-6 leading-relaxed">{content}</p>
-      <div className="flex items-center gap-4">
-        <img
-          src={image}
-          alt={name}
-          className="w-16 h-16 rounded-full object-cover border-2 border-[#F96303]"
-        />
-        <div>
-          <p className="font-bold text-lg text-[#F96303]">{name}</p>
-          <p className="text-[#0bafe1]">{role}</p>
-        </div>
-      </div>
-      <div className="flex mt-4">
-        {[...Array(rating)].map((_, i) => (
-          <Star key={i} size={20} fill={colors.accent} color={colors.accent} />
-        ))}
+      <div
+        ref={contentRef}
+        className="w-full h-full"
+        style={{ backfaceVisibility: "hidden" }}
+      >
+        {!showVideo ? (
+          <>
+            <QuoteIcon size={40} className="text-[#FB640B] mb-4" />
+            <p className="text-gray-700 text-lg mb-6 leading-relaxed">
+              {content}
+            </p>
+            <div className="flex items-center gap-4">
+              <img
+                src={image}
+                alt={name}
+                className="w-16 h-16 rounded-full object-cover border-2 border-[#F96303]"
+              />
+              <div>
+                <p className="font-bold text-lg text-[#F96303]">{name}</p>
+                <p className="text-[#0bafe1]">{role}</p>
+              </div>
+            </div>
+            <div className="flex mt-4">
+              {[...Array(rating)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={20}
+                  fill={colors.accent}
+                  color={colors.accent}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <ReactPlayer url={videoUrl} width="100%" height="100%" controls />
+          </div>
+        )}
       </div>
       {videoUrl && (
-        <div className="mt-4">
-          <Button
-            variant="outline"
-            onClick={() => setShowVideo(!showVideo)}
-            className="flex items-center gap-2"
-          >
-            <Play size={16} />
-            {showVideo ? "Hide Video" : "Watch Video Testimonial"}
-          </Button>
-          {showVideo && (
-            <div className="mt-4">
-              <ReactPlayer
-                url={videoUrl}
-                width="100%"
-                height="200px"
-                controls
-              />
-            </div>
-          )}
-        </div>
+        <Button
+          variant="outline"
+          onClick={flipCard}
+          className="absolute bottom-4 right-4 flex items-center gap-2"
+        >
+          <Play size={16} />
+          {showVideo ? "Hide Video" : "Watch Video"}
+        </Button>
       )}
     </div>
   );
@@ -134,55 +164,55 @@ const TestimonialForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Name
+        <label htmlFor="name" className="block text-sm font-medium text-white">
+          Nombre
         </label>
         <Input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          className="bg-white/20 text-white placeholder-white/50"
         />
       </div>
       <div>
-        <label
-          htmlFor="role"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Role
+        <label htmlFor="role" className="block text-sm font-medium text-white">
+          Rol
         </label>
         <Input
           id="role"
           value={role}
           onChange={(e) => setRole(e.target.value)}
           required
+          className="bg-white/20 text-white placeholder-white/50"
         />
       </div>
       <div>
         <label
           htmlFor="content"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-white"
         >
-          Your Testimonial
+          Tu Testimonio
         </label>
         <Textarea
           id="content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           required
+          className="bg-white/20 text-white placeholder-white/50"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Rating
+        <label className="block text-sm font-medium text-white">
+          Calificación
         </label>
         <StarRating rating={rating} setRating={setRating} />
       </div>
-      <Button type="submit" className="w-full">
-        Submit Testimonial
+      <Button
+        type="submit"
+        className="w-full bg-white text-[#F96303] hover:bg-white/90"
+      >
+        Enviar Testimonio
       </Button>
     </form>
   );
@@ -198,7 +228,8 @@ const FeaturedTestimonial = ({ testimonial }) => {
       {
         opacity: 1,
         y: 0,
-        duration: 0.5,
+        duration: 0.8,
+        ease: "power3.out",
         scrollTrigger: {
           trigger: featuredRef.current,
           start: "top 80%",
@@ -210,7 +241,7 @@ const FeaturedTestimonial = ({ testimonial }) => {
   return (
     <div
       ref={featuredRef}
-      className="bg-gradient-to-r from-[#F96303] to-[#0bafe1] p-8 rounded-xl shadow-lg text-white mb-12"
+      className="bg-gradient-to-r from-[#F96303] to-[#0bafe1] p-8 rounded-xl shadow-lg text-white mb-12 transform hover:scale-105 transition-transform duration-300"
     >
       <h3 className="text-2xl font-bold mb-4">Testimonio Destacado</h3>
       <div className="flex items-start gap-6">
@@ -291,7 +322,10 @@ const TestimonialSection = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-gray-300" ref={sectionRef}>
+    <section
+      className="py-20 bg-gradient-to-b from-gray-100 to-gray-200"
+      ref={sectionRef}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12" ref={titleRef}>
           <span className="text-xl font-semibold text-[#FB640B]">
@@ -328,7 +362,7 @@ const TestimonialSection = () => {
             </Swiper>
           </div>
           <div className="lg:w-1/3" ref={formRef}>
-            <div className="bg-[#F96303] text-white p-8 rounded-xl shadow-lg">
+            <div className="bg-gradient-to-br from-[#F96303] to-[#FB640B] text-white p-8 rounded-xl shadow-lg">
               <h3 className="text-2xl font-bold mb-4">
                 Comparte Tu Experiencia
               </h3>
